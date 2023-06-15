@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>fepaint</title>
+    <style>
+        * {
+            image-rendering: pixelated;
+        }
+        body {
+            background: wheat;
+        }
+        .canvas {
+            display: none;
+        }
+        #id-virtual-canvas {
+            display: none;
+        }
+        #id-div-menuList {
+            font-family: 'Segoe UI', sans-serif;
+            font-size: 15px;
+            display: flex;
+            justify-content: flex-start;
+            flex-wrap: nowrap;
+            position: absolute;
+            top: 2px;
+            left: 3px;
+            width: calc(100% - 6px);
+            border-top: 1px solid #7b7b7b;
+            border-left: 1px solid #7b7b7b;
+            padding-left: 3px;
+        }
+        .menu {
+            margin-right: 10px;
+        }
+        #id-div-canvasList {
+            cursor: url("./img/cursor/pencil.png") 13 23, crosshair;
+            width: 650px;
+            height: 480px;
+            border: 2px solid #ccc;
+            padding: 5px;
+            overflow: auto;
+            position: absolute;
+            left: 60px;
+            top: 25px;
+            background: #7b7b7b;
+        }
+        #id-div-keyColorList {
+            display: flex;
+            width: 40px;
+            height: 40px;
+            border-top: 2px solid black;
+            border-left: 2px solid black;
+            border-right: 2px solid white;
+            border-bottom: 2px solid white;
+            background: url(./img/texture.png) repeat;
+            box-sizing: border-box;
+        }
+        #id-div-colorList {
+            position: absolute;
+            top: 530px;
+            left: 5px;
+            display: flex;
+            border-top: 1px solid #7B7B7B;
+            border-left: 1px solid #7B7B7B;
+            border-right: 1px solid #BBBBBB;
+            border-bottom: 1px solid #BBBBBB;
+        }
+        #id-div-mainColor {
+            width: 20px;
+            height: 20px;
+            position: absolute;
+            top: 5px;
+            left: 5px;
+            z-index: 1;
+            box-sizing: border-box;
+            border-top: 1px solid #fff;
+            border-left: 1px solid #fff;
+            border-right: 2px solid #7B7B7B;
+            border-bottom: 2px solid #7B7B7B;
+        }
+        #id-div-sideColor {
+            width: 20px;
+            height: 20px;
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            z-index: 0;
+            box-sizing: border-box;
+            border-top: 1px solid #fff;
+            border-left: 1px solid #fff;
+            border-right: 2px solid #7B7B7B;
+            border-bottom: 2px solid #7B7B7B;
+        }
+        #id-div-pickList {
+            display: flex;
+            width: 280px;
+            height: 40px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        .color-rect {
+            display: inline-block;
+            border-top: 1.5px solid #7b7b7b;
+            border-left: 1.5px solid #7b7b7b;
+            border-right: 1.5px solid white;
+            border-bottom: 1.5px solid white;
+            box-sizing: border-box;
+            width: 20px;
+            height: 20px;
+        }
+        #id-div-modeList {
+            width: 50px;
+            height: 200px;
+            position: absolute;
+            display: flex;
+            flex-wrap: wrap;
+            left: 5px;
+            top: 25px;
+        }
+        #id-div-modeList div {
+            margin: 0;
+            padding: 0;
+            width: 25px;
+            height: 25px;
+            border: 0;
+            border-right: 1px solid black;
+            border-bottom: 1px solid black;
+            background: transparent;
+            outline: 0;
+            box-sizing: border-box;
+            position: relative;
+        }
+        #id-div-modeList div:before {
+            content: " ";
+            position: absolute;
+            z-index: 1;
+            top: 0px;
+            left: 0px;
+            right: 0px;
+            bottom: 0px;
+            border-top: 1px solid white;
+            border-left: 1px solid white;
+            border-right: 1px solid #7b7b7b;
+            border-bottom: 1px solid #7b7b7b;
+        }
+        #id-div-modeList div span {
+            display: block;
+            position: absolute;
+            left: 0px;
+            top: 0px;
+            width: 24px;
+            height: 24px;
+            background-image: url('./img/modeList.png');
+        }
+        #id-div-modeList div:nth-child(1) span {
+            background-position: 0px 0px;
+        }
+        #id-div-modeList div:nth-child(2) span {
+            background-position: 24px 0px;
+        }
+        #id-div-modeList div:nth-child(3) span {
+            background-position: 0px -25px;
+        }
+        #id-div-modeList div:nth-child(4) span {
+            background-position: 24px -25px;
+        }
+        #id-div-modeList div:nth-child(5) span {
+            background-position: 0px -50px;
+        }
+        #id-div-modeList div:nth-child(6) span {
+            background-position: 24px -50px;
+        }
+        #id-div-modeList div:nth-child(7) span {
+            background-position: 0px -75px;
+        }
+        #id-div-modeList div:nth-child(8) span {
+            background-position: 24px -75px;
+        }
+        #id-div-modeList div:nth-child(9) span {
+            background-position: 0px -100px;
+        }
+        #id-div-modeList div:nth-child(10) span {
+            background-position: 24px -100px;
+        }
+        #id-div-modeList div:nth-child(11) span {
+            background-position: 0px -125px;
+        }
+        #id-div-modeList div:nth-child(12) span {
+            background-position: 24px -125px;
+        }
+        #id-div-modeList div:nth-child(13) span {
+            background-position: 0px -150px;
+        }
+        #id-div-modeList div:nth-child(14) span {
+            background-position: 24px -150px;
+        }
+        #id-div-modeList div:nth-child(15) span {
+            background-position: 0px -175px;
+        }
+        #id-div-modeList div:nth-child(16) span {
+            background-position: 24px -175px;
+        }
+        #id-div-modeList div span button {
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+        }
+        #container {
+            position: relative;
+            width: 750px;
+            height: 600px;
+            background-color: #bdbdbd;
+            margin: 0 auto;
+            border-radius: 4px;
+        }
+        #title {
+            text-align: center;
+        }
+        #id-div-optionList {
+            border: 1px solid white;
+            border-top-color: #7b7b7b;
+            border-left-color: #7b7b7b;
+            margin-top: 3px;
+            width: 41px;
+            height: 63px;
+            box-sizing: border-box;
+            position: absolute;
+            top: 230px;
+            left: 10px;
+            /*控制*/
+            display: flex;
+            flex: 1;
+            flex-flow: row wrap;
+            justify-content: space-around;
+            align-content: space-around;
+        }
+        #id-div-statusList {
+            position: absolute;
+            bottom: 0px;
+            font-family: 'Segoe UI', sans-serif;
+            font-size: 12px;
+            padding: 3px 2px;
+            padding-top: 4px;
+            border-top: 1px solid #7b7b7b;
+            outline: 1px solid #7b7b7b;
+            outline-offset: 1px;
+            flex: 0 0 auto;
+            display: flex;
+            width: calc(100% - 5px);
+            justify-content: space-between;
+        }
+        #id-div-status-coordinate {
+            min-width: 150px;
+            padding-left: 15px;
+            border-left: 1px solid #7b7b7b;
+            border-right: 1px solid #7b7b7b;
+            margin-right: 15%;
+        }
+        .active-option {
+            background: rgb(0, 0, 128);
+        }
+        .active-mode {
+            padding-bottom: 2px !important;
+            top: 0px;
+            left: 0px;
+            right: 0px;
+            bottom: 0px;
+            border-top: 1px solid black !important;
+            border-left: 1px solid black !important;
+            border-right: 1px solid white !important;
+            border-bottom: 1px solid white !important;
+            background: url(./img/texture.png) repeat !important;
+        }
+        .active-mode:before {
+            top: 0px;
+            left: 0px;
+            right: 0px;
+            bottom: 0px;
+            border-top: 1px solid #7b7b7b !important;
+            border-left: 1px solid #7b7b7b !important;
+            border-right: 1px solid #bdbdbd !important;
+            border-bottom: 1px solid #bdbdbd !important;
+        }
+        .active {
+            display: inline-block;
+        }
+        .underline {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <h1 id="title">
+        <img src="./img/mspaint.png">
+        Coin Paint is a remake of MS Paint editor
+    </h1>
+    <div id="container">
+        <div id="id-div-menuList">
+            <div class="menu">
+                <span class="underline">F</span>ile
+            </div>
+            <div class="menu">
+                <span class="underline">E</span>dit
+            </div>
+            <div class="menu">
+                <span class="underline">V</span>iew
+            </div>
+            <div class="menu">
+                <span class="underline">I</span>mage
+            </div>
+            <div class="menu">
+                <span class="underline">C</span>olors
+            </div>
+            <div class="menu">
+                <span class="underline">H</span>elp
+            </div>
+        </div>
+        <div id="id-div-modeList">
+            <!--前期都是这样, 先写死这些 dom-->
+            <!--后期要用代码生成才好-->
+            <div>
+                <span>
+                    <button id="id-button-freeSelect"></button>
+                </span>
+            </div>
+            <div>
+                <span>
+                    <button id="id-button-select"></button>
+                </span>
+            </div>
+            <div>
+                <span>
+                    <button id="id-button-eraser"></button>
+                </span>
+            </div>
+            <div>
+                <span>
+                    <button id="id-button-fillColor"></button>
+                </span>
+            </div>
+            <div>
+                <span>
+                    <button id="id-button-pickColor"></button>
+                </span>
+            </div>
+            <div>
+                <span>
+                    <button id="id-button-magnifier"></button>
+                </span>
+            </div>
+            <div class="active-mode">
+                <span>
+                    <button id="id-button-pencil"></button>
+                </span>
+            </div>
+            <div>
+                <span>
+                    <button id="id-button-brush"></button>
+                </span>
+            </div>
+            <div>
+                <span>
+                    <button id="id-button-airbrush"></button>
+                </span>
+            </div>
+            <div>
+                <span>
+                    <button id="id-button-text"></button>
+                </span>
+            </div>
+            <div>
+                <span>
+                    <button id="id-button-line"></button>
+                </span>
+            </div>
+            <div>
+                <span>
+                    <button id="id-button-bezier"></button>
+                </span>
+            </div>
+            <div>
+                <span>
+                    <button id="id-button-rect"></button>
+                </span>
+            </div>
+            <div>
+                <span>
+                    <button id="id-button-polygon"></button>
+                </span>
+            </div>
+            <div>
+                <span>
+                    <button id="id-button-ellipse"></button>
+                </span>
+            </div>
+            <div>
+                <span>
+                    <button id="id-button-roundRect"></button>
+                </span>
+            </div>
+        </div>
+        <div id="id-div-optionList"></div>
+        <div id="id-div-canvasList">
+            <canvas id="id-virtual-canvas" width="500px" height="400px"></canvas>
+            <canvas id="id-canvas-1" class="canvas active" width="500px" height="400px"></canvas>
+            <canvas id="id-canvas-2" class="canvas" width="1000px" height="800px"></canvas>
+            <canvas id="id-canvas-4" class="canvas" width="1500px" height="1200px"></canvas>
+        </div>
+        <div id="id-div-colorList">
+            <div id="id-div-keyColorList">
+                <div id="id-div-mainColor"></div>
+                <div id="id-div-sideColor"></div>
+            </div>
+            <div id="id-div-pickList"></div>
+        </div>
+        <div id="id-div-statusList">
+            <div id="id-div-status-text">
+                For Help, click Help Topics on the Help Menu.
+            </div>
+            <div id="id-div-status-coordinate">
+            </div>
+        </div>
+    </div>
+</body>
+    <script src="util.js"></script>
+    <script src="canvas.js"></script>
+    <script src="painter.js"></script>
+    <script src="option.js"></script>
+    <script src="mode.js"></script>
+    <script src="mode_magnifier.js"></script>
+    <script src="mode_pencil.js"></script>
+    <script src="mode_line.js"></script>
+    <script src="mode_brush.js"></script>
+    <script src="mode_airbrush.js"></script>
+    <script src="mode_ellipse.js"></script>
+    <script src="mode_rect.js"></script>
+    <script src="mode_text.js"></script>
+    <script src="mode_round_rect.js"></script>
+    <script src="mode_pick_color.js"></script>
+    <script src="mode_fill_color.js"></script>
+    <script src="mode_free_select.js"></script>
+    <script src="mode_polygon.js"></script>
+    <script src="mode_eraser.js"></script>
+    <script src="mode_select.js"></script>
+    <script src="mode_bezier.js"></script>
+    <script src="main.js"></script>
+</html>
